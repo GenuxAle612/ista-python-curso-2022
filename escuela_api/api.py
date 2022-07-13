@@ -28,10 +28,24 @@ def lista_estudiantes():
 @app.route('/registrar_asistencia', methods=['POST'])
 def registrar_asistencia():
     with open('datos\listado_asistencia.csv', 'a', newline='') as listado:
-        writer = csv.writer(listado, delimiter=',', quotechar='', quoting=csv.QUOTE_NONE , escapechar=' ')    
-        guardado = [request.json ['cedula']+','+ request.json ['materia']+','+ request.json ['fecha_año']+','+ request.json ['fecha_mes']+','+ request.json ['fecha_dia']]      
+        writer = csv.writer(listado, delimiter=',')    
+        guardado = [request.json ['cedula'], request.json ['materia'], request.json ['fecha_año'], request.json ['fecha_mes'], request.json ['fecha_dia']]
         writer.writerow(guardado)
     return 'Asistencia guardada'
+
+@app.route('/eliminar_estudiante/<cedula>', methods=['DELETE'])
+def eliminar_estudiante(cedula):
+    with open('datos\estudiante.csv', 'r') as file:
+        reader = csv.reader(file)
+        next(reader)
+        lista = []
+        for columna in reader:
+            if columna[0] != cedula:
+                lista.append(columna)
+    with open('datos\estudiante.csv', 'w', newline='') as file:
+        writer = csv.writer(file, delimiter=',')
+        writer.writerows(lista)
+    return 'Estudiante eliminado'
 
 
 if __name__ == '__main__':
